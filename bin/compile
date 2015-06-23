@@ -18,7 +18,7 @@ BP_DIR=$(cd $(dirname ${0:-}); cd ..; pwd)
 mkdir -p "$BUILD_DIR/.heroku/node/"
 cd $BUILD_DIR
 export PATH="$BUILD_DIR/.heroku/node/bin":$PATH
-
+echo $PATH
 ### Load dependencies
 
 source $BP_DIR/lib/output.sh
@@ -42,7 +42,7 @@ trap 'handle_failure' ERR
 [ -e "$BUILD_DIR/node_modules" ] && PREBUILD=true || PREBUILD=false
 
 ### Failures that should be caught immediately
-
+echo 'ls -l $BUILD_DIR'
 fail_invalid_package_json "$BUILD_DIR"
 warn_prebuilt_modules "$BUILD_DIR"
 warn_missing_package_json "$BUILD_DIR"
