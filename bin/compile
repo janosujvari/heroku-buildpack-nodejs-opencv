@@ -109,37 +109,6 @@ restore_cache() {
 header "Restoring cache"
 restore_cache | indent
 
-build_dependencies() {
-  if $PREBUILD; then
-    echo "Prebuild detected (node_modules already exists)"
-    rebuild_node_modules "$BUILD_DIR"
-  else
-    install_node_modules "$BUILD_DIR"
-  fi
-}
-
-header "Building dependencies"
-build_dependencies | indent
-
-cache_build() {
-  local cache_directories=$(get_cache_directories)
-  echo "Clearing previous node cache"
-  clear_cache
-  if [ "$cache_directories" == "" ]; then
-    echo "Saving 1 cacheDirectories (default):"
-    save_cache_directories "$BUILD_DIR" "$CACHE_DIR" "node_modules"
-  else
-    echo "Saving $(echo $cache_directories | wc -w | xargs) cacheDirectories (package.json):"
-    save_cache_directories "$BUILD_DIR" "$CACHE_DIR" $cache_directories
-  fi
-}
-
-header "Caching build"
-cache_build | indent
-
-
-
-
 getandbuild_opencv(){
   # fetch and cache the vulcan build
   OPENCV_PACKAGE="http://s3.amazonaws.com/tznode/vulcan-compiled-opencv.tgz"
@@ -172,12 +141,46 @@ getandbuild_opencv(){
   # try to add it to $PATH
   echo "export PATH=\"\$HOME/vendor/opencv/lib:$PATH\"" >> $BUILD_DIR/.profile.d/nodejs.sh
   echo "export PATH=\"\$HOME/vendor/opencv/lib/pkgconfig:$PATH\"" >> $BUILD_DIR/.profile.d/nodejs.sh
-
+  echo "export LD_LIBRARY_PATH=\"\$HOME/vendor/opencv/lib:\$LD_LIBRARY_PATH\"" >> $BUILD_DIR/.profile.d/nodejs.sh
+  echo "export PKG_CONFIG_PATH=\"\$HOME/vendor/opencv/lib/pkgconfig:\$PKG_CONFIG_PATH\"" >> $BUILD_DIR/.profile.d/nodejs.sh
 
 }
 
 header "Fetch and build OpenCV"
 getandbuild_opencv | indent
+
+build_dependencies() {
+  if $PREBUILD; then
+    echo "Prebuild detected (node_modules already exists)"
+    rebuild_node_modules "$BUILD_DIR"
+  else
+    install_node_modules "$BUILD_DIR"
+  fi
+}
+
+header "Building dependencies"
+build_dependencies | indent
+
+cache_build() {
+  local cache_directories=$(get_cache_directories)
+  echo "Clearing previous node cache"
+  clear_cache
+  if [ "$cache_directories" == "" ]; then
+    echo "Saving 1 cacheDirectories (default):"
+    save_cache_directories "$BUILD_DIR" "$CACHE_DIR" "node_modules"
+  else
+    echo "Saving $(echo $cache_directories | wc -w | xargs) cacheDirectories (package.json):"
+    save_cache_directories "$BUILD_DIR" "$CACHE_DIR" $cache_directories
+  fi
+}
+
+header "Caching build"
+cache_build | indent
+
+
+
+
+
 
 
 
