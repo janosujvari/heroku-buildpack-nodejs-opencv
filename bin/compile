@@ -168,6 +168,12 @@ getandbuild_opencv(){
   mkdir -p "$BUILD_DIR/.profile.d"
   echo "export LD_LIBRARY_PATH=\"\$HOME/vendor/opencv/lib:\$LD_LIBRARY_PATH\"" > $BUILD_DIR/.profile.d/opencv.sh
   echo "export PKG_CONFIG_PATH=\"\$HOME/vendor/opencv/lib/pkgconfig:\$PKG_CONFIG_PATH\"" >> $BUILD_DIR/.profile.d/opencv.sh
+
+  # try to add it to $PATH
+  echo "export PATH=\"\$HOME/vendor/opencv/lib:$PATH\"" >> $BUILD_DIR/.profile.d/nodejs.sh
+  echo "export PATH=\"\$HOME/vendor/opencv/lib/pkgconfig:$PATH\"" >> $BUILD_DIR/.profile.d/nodejs.sh
+
+
 }
 
 header "Fetch and build OpenCV"
